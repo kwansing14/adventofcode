@@ -41,11 +41,12 @@ for (let i = 0; i < texts.length; i++) {
       // numColor =  3 blue
       const [number, color] = numColor[k].trim().split(' ');
 
-      const res = partOneQuiz(number, color);
-      if (res) hasExceededLimit = true;
+      const limitReached = partOneQuiz(number, color);
+      if (limitReached) hasExceededLimit = true;
     }
 
     if (j === eachSet.length - 1) {
+      // adding all id that has not exceeded limit
       if (!hasExceededLimit) ans += i + 1;
     }
   }
