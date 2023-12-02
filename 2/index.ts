@@ -1,9 +1,11 @@
-const file = Bun.file('./example.txt');
+const file = Bun.file('./input.txt');
 const text = await file.text();
 const texts = text.split('\n');
 
 const limit = { red: 12, green: 13, blue: 14 };
+
 let ans = 0;
+let ans2 = 0;
 
 const partOneQuiz = (number: string, color: string) => {
   if (
@@ -16,8 +18,24 @@ const partOneQuiz = (number: string, color: string) => {
   return false;
 };
 
+const partTwoQuiz = (
+  number: string,
+  color: string,
+  newLimit: { red: number; green: number; blue: number }
+) => {
+  if (
+    (color === 'red' && Number(number) > newLimit.red) ||
+    (color === 'green' && Number(number) > newLimit.green) ||
+    (color === 'blue' && Number(number) > newLimit.blue)
+  ) {
+    return { number, color } as {
+      number: string;
+      color: 'red' | 'green' | 'blue';
+    };
+  }
+};
+
 /**
- * PART ONE
  * Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
  * Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
  * Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -30,6 +48,8 @@ for (let i = 0; i < texts.length; i++) {
   const eachSets = game.slice(8);
   const eachSet = eachSets.split(';');
 
+  // for part 2 quiz
+  const part2Limit = { red: 0, green: 0, blue: 0 };
   let hasExceededLimit = false;
 
   for (let j = 0; j < eachSet.length; j++) {
@@ -41,8 +61,18 @@ for (let i = 0; i < texts.length; i++) {
       // numColor =  3 blue
       const [number, color] = numColor[k].trim().split(' ');
 
+      /**
+       * PART ONE QUIZ LOGICS
+       */
       const limitReached = partOneQuiz(number, color);
       if (limitReached) hasExceededLimit = true;
+      /**
+       * PART TWO QUIZ LOGICS
+       */
+      const res = partTwoQuiz(number, color, part2Limit);
+      if (res?.color) {
+        part2Limit[res.color] = Number(res?.number);
+      }
     }
 
     if (j === eachSet.length - 1) {
@@ -50,10 +80,8 @@ for (let i = 0; i < texts.length; i++) {
       if (!hasExceededLimit) ans += i + 1;
     }
   }
+  const total = part2Limit.red * part2Limit.green * part2Limit.blue;
+  ans2 += total;
 }
-
-/**
- * PART TWO
- */
-
 console.log(ans);
+console.log(ans2);
