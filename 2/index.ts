@@ -1,11 +1,23 @@
-const file = Bun.file('./input.txt');
+const file = Bun.file('./example.txt');
 const text = await file.text();
 const texts = text.split('\n');
 
 const limit = { red: 12, green: 13, blue: 14 };
 let ans = 0;
 
+const partOneQuiz = (number: string, color: string) => {
+  if (
+    (color === 'red' && Number(number) > limit.red) ||
+    (color === 'green' && Number(number) > limit.green) ||
+    (color === 'blue' && Number(number) > limit.blue)
+  ) {
+    return true;
+  }
+  return false;
+};
+
 /**
+ * PART ONE
  * Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
  * Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
  * Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
@@ -29,20 +41,18 @@ for (let i = 0; i < texts.length; i++) {
       // numColor =  3 blue
       const [number, color] = numColor[k].trim().split(' ');
 
-      if (
-        (color === 'red' && Number(number) > limit.red) ||
-        (color === 'green' && Number(number) > limit.green) ||
-        (color === 'blue' && Number(number) > limit.blue)
-      ) {
-        console.log('exceeded: ', i + 1, number, color);
-        hasExceededLimit = true;
-      }
+      const res = partOneQuiz(number, color);
+      if (res) hasExceededLimit = true;
     }
+
     if (j === eachSet.length - 1) {
-      console.log('last id', i + 1, hasExceededLimit);
       if (!hasExceededLimit) ans += i + 1;
     }
   }
 }
+
+/**
+ * PART TWO
+ */
 
 console.log(ans);
