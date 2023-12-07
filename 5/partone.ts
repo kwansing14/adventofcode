@@ -1,6 +1,6 @@
-const file = Bun.file('./input.txt');
+const file = Bun.file("./example.txt");
 const text = await file.text();
-const texts = text.split('\n\n');
+const texts = text.split("\n\n");
 
 const numMatch = (
   range: { lower: number; higher: number; link: number },
@@ -15,14 +15,14 @@ const numMatch = (
 };
 
 const getRange = (range: string) => {
-  const res1 = range.split(' ');
+  const res1 = range.split(" ");
   const lower = Number(res1[1]);
   const higher = Number(res1[1]) + (Number(res1[2]) - 1);
   return { lower, higher, link: Number(res1[0]) };
 };
 
 const getNumbersFromMap = (maps: string, seed: number) => {
-  const map = maps.split('\n').slice(1);
+  const map = maps.split("\n").slice(1);
   let defaultNum = 0;
   for (let i = 0; i < map.length; i++) {
     const range = getRange(map[i]);
@@ -42,7 +42,7 @@ const getLocation = (seed: string) => {
   return correspondingValue;
 };
 
-const seeds = texts[0].split(' ').slice(1);
+const seeds = texts[0].split(" ").slice(1);
 let ans = 0;
 for (let i = 0; i < seeds.length; i++) {
   // console.log(seeds[0]);
@@ -52,4 +52,4 @@ for (let i = 0; i < seeds.length; i++) {
   if (ans > location) ans = location;
 }
 
-console.log('ans: ', ans);
+console.log("ans: ", ans);
