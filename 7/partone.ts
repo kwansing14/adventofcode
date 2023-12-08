@@ -1,20 +1,21 @@
-import { readTxt } from "../common/utils";
+import { readTxt } from '../common/utils';
+
 enum cardLetters {
-  "A" = 14,
-  "K" = 13,
-  "Q" = 12,
-  "J" = 11,
-  "T" = 10,
+  'A' = 14,
+  'K' = 13,
+  'Q' = 12,
+  'J' = 11,
+  'T' = 10,
 }
 
 enum cardTypes {
-  "fiveofakind",
-  "fourofakind",
-  "fullhouse",
-  "threeofakind",
-  "twopair",
-  "onepair",
-  "highcard",
+  'fiveofakind',
+  'fourofakind',
+  'fullhouse',
+  'threeofakind',
+  'twopair',
+  'onepair',
+  'highcard',
 }
 
 const getCardType = (cards: string) => {
@@ -57,15 +58,15 @@ const getCardType = (cards: string) => {
 
 const sameCardType = (cards1: string, cards2: string) => {
   for (let i = 0; i < 5; i++) {
-    const a = cards1[i];
-    const b = cards2[i];
+    const a = cards1[i] as keyof typeof cardLetters;
+    const b = cards2[i] as keyof typeof cardLetters;
     if (Number(a) && Number(b)) {
       if (Number(a) !== Number(b)) {
         return Number(a) > Number(b);
       }
     }
     if (!Number(a) && Number(b)) {
-      if (cardLetters[a] !== Number(b)) {
+      if (typeof a === 'string') {
         return cardLetters[a] > Number(b);
       }
     }
@@ -96,7 +97,7 @@ const countAmount = (arr: string[]) => {
   let multiplier = 1;
   let sum = 0;
   for (let i = 0; i < arr.length; i++) {
-    const amt = arr[i].split(" ")[1];
+    const amt = arr[i].split(' ')[1];
     // console.log(amt);
     sum += Number(amt) * multiplier;
     multiplier++;
@@ -112,8 +113,8 @@ const main = async (url: string) => {
   // start of bubble sorting of cards
   for (let i = 0; i < arr.length; i++) {
     for (let j = 0; j < arr.length - i - 1; j++) {
-      const card = arr[j].split(" ")[0];
-      const nextCard = arr[j + 1].split(" ")[0];
+      const card = arr[j].split(' ')[0];
+      const nextCard = arr[j + 1].split(' ')[0];
       const isCardOnTheRightStronger = checkCard(card, nextCard);
 
       if (isCardOnTheRightStronger) {
@@ -121,7 +122,7 @@ const main = async (url: string) => {
         arr[j] = arr[j + 1];
         arr[j + 1] = temp;
       }
-      console.log("i", i, "j", j, arr.length);
+      console.log('i', i, 'j', j, arr.length);
     }
   }
   // console.log(arr);
@@ -131,6 +132,6 @@ const main = async (url: string) => {
   return ans;
 };
 
-console.log("start");
-const ans = await main("./input.txt");
-console.log("ans:", ans);
+console.log('start');
+const ans = await main('./input.txt');
+console.log('ans:', ans);
