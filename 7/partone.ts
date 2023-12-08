@@ -1,4 +1,11 @@
 import { readTxt } from "../common/utils";
+enum cardLetters {
+  "A" = 14,
+  "K" = 13,
+  "Q" = 12,
+  "J" = 11,
+  "T" = 10,
+}
 
 enum cardTypes {
   "fiveofakind",
@@ -48,68 +55,82 @@ const getCardType = (cards: string) => {
   return cardTypes.highcard;
 };
 
-const checkCard = (cards1: string, cards2: string) => {
-  const res1 = getCardType(cards1);
-  const res2 = getCardType(cards2);
-
-  console.log(cards1, cardTypes[res1], cards2, cardTypes[res2], res1 > res2);
-  if (res1 > res2) {
-    return true;
+const sameCardType = (cards1: string, cards2: string) => {
+  for (let i = 0; i < 5; i++) {
+    const a = cards1[i];
+    const b = cards2[i];
+    if (Number(a) && Number(b)) {
+      if (Number(a) !== Number(b)) {
+        return Number(a) > Number(b);
+      }
+    }
+    if (!Number(a) && Number(b)) {
+      if (cardLetters[a] !== Number(b)) {
+        return cardLetters[a] > Number(b);
+      }
+    }
+    if (Number(a) && !Number(b)) {
+      if (Number(a) !== cardLetters[b]) {
+        return Number(a) > cardLetters[b];
+      }
+    }
+    if (!Number(a) && !Number(b)) {
+      if (cardLetters[a] !== cardLetters[b]) {
+        return cardLetters[a] > cardLetters[b];
+      }
+    }
   }
   return false;
 };
 
-// Creating the bblSort function
-const bblSortForCard = (arr: string[]) => {
-  for (let i = 0; i < arr.length; i++) {
-    // Last i elements are already in place
-    for (let j = 0; j < arr.length - i - 1; j++) {
-      // Checking if the item at present iteration
-      // is greater than the next iteration
-      const card = arr[i].split(" ")[0];
-      const nextCard = arr[i + 1].split(" ")[0];
-      const isCardOnTheRightStronger = checkCard(card, nextCard);
+const checkCard = (cards1: string, cards2: string) => {
+  const res1 = getCardType(cards1);
+  const res2 = getCardType(cards2);
 
-      if (!isCardOnTheRightStronger) {
-        console.log("swap", card, "with", nextCard, !isCardOnTheRightStronger);
-        console.log("j", j, arr);
-        // If the condition is true
-        // then swap them
-        var temp = arr[j];
-        arr[j] = arr[j + 1];
-        arr[j + 1] = temp;
-        console.log("j", j + 1, arr);
-      }
-      // console.log(arr);
-    }
+  if (res1 === res2) return sameCardType(cards1, cards2);
+  if (res1 < res2) return true;
+  return false;
+};
+
+const countAmount = (arr: string[]) => {
+  let multiplier = 1;
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    const amt = arr[i].split(" ")[1];
+    // console.log(amt);
+    sum += Number(amt) * multiplier;
+    multiplier++;
   }
-  // Print the sorted array
-  console.log(arr);
+  // console.log(sum);
+  return sum;
 };
 
 const main = async (url: string) => {
   let ans = 0;
-  const texts = await readTxt(url);
-  // console.log(texts);
-  bblSortForCard(texts);
-  // for (let i = 0; i < texts.length - 1; i++) {
-  //   const card = texts[i].split(" ")[0];
-  //   const nextCard = texts[i + 1].split(" ")[0];
-  //   const amt = texts[i].split(" ")[1];
 
-  //   // const res = getCardType(card);
+  const arr = await readTxt(url);
+  // start of bubble sorting of cards
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      const card = arr[j].split(" ")[0];
+      const nextCard = arr[j + 1].split(" ")[0];
+      const isCardOnTheRightStronger = checkCard(card, nextCard);
 
-  //   const isCardOnTheRightStronger = checkCard(card, nextCard);
-  //   console.log("yes", isCardOnTheRightStronger);
+      if (isCardOnTheRightStronger) {
+        const temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+      console.log("i", i, "j", j, arr.length);
+    }
+  }
+  // console.log(arr);
 
-  //   // console.log("cardtype: ", card, "-", cardTypes[res]);
-  // }
+  ans = countAmount(arr);
 
-  // const res = getCardType(card);
-  // console.log("cardtype: ", res);
   return ans;
 };
 
 console.log("start");
-const ans = await main("./example.txt");
-// console.log("ans:", ans);
+const ans = await main("./input.txt");
+console.log("ans:", ans);
